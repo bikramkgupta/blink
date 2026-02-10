@@ -46,10 +46,13 @@ WORKDIR /home/node
 COPY --from=build /home/node ./
 
 ENV NODE_ENV production
+ENV PORT 8080
+
+EXPOSE 8080
 
 # While we already handle SIGINT/SIGTERM directly, there is no way for us to be 100% SURE that none of our dependencies won't spawn a zombie process.
 ENTRYPOINT ["tini", "--"]
 CMD ["node", "bin/www"]
 
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:$PORT/health || exit 1

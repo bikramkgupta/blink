@@ -14,9 +14,11 @@ custom.setHttpOptionsDefaults({
 
 let client
 // TODO: need ESM conversion for top-level await
-Issuer.discover(process.env.OIDC_ISSUER_BASE_URL)
-  .then(issuer => {
-    log.info('Connected to OIDC issuer')
+const oidcIssuerUrl = process.env.OIDC_ISSUER_BASE_URL
+if (oidcIssuerUrl && typeof oidcIssuerUrl === 'string' && oidcIssuerUrl.trim()) {
+  Issuer.discover(oidcIssuerUrl)
+    .then(issuer => {
+      log.info('Connected to OIDC issuer')
 
     client = new issuer.Client({
       client_id: process.env.OIDC_CLIENT_ID,
@@ -66,11 +68,14 @@ Issuer.discover(process.env.OIDC_ISSUER_BASE_URL)
         }
       )
     )
-  })
-  .catch(err => {
-    log.error(err)
-    process.exit(404)
-  })
+    })
+    .catch(err => {
+      log.error(err)
+      process.exit(404)
+    })
+} else {
+  log.info('OIDC not configured - skipping OIDC setup')
+}
 
 passport.serializeUser((user, done) => done(null, user.id))
 passport.deserializeUser(async (id, done) => {

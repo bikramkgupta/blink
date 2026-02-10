@@ -1,0 +1,158 @@
+name: blink
+region: syd1
+services:
+  - name: blink-web
+    github:
+      repo: bikramkgupta/blink
+      branch: app_platform
+      deploy_on_push: true
+    dockerfile_path: Dockerfile
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-2gb
+    envs:
+      # App configuration
+      - key: PORT
+        scope: RUN_TIME
+        type: GENERAL
+        value: "8080"
+      - key: NODE_ENV
+        scope: RUN_TIME
+        type: GENERAL
+        value: "production"
+      - key: BASE_URL
+        scope: RUN_TIME
+        type: GENERAL
+        value: "${BASE_URL}"
+      - key: HOMEPAGE
+        scope: RUN_TIME
+        type: GENERAL
+        value: "/app"
+
+      # Database connections (Phase B will configure)
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        type: SECRET
+        value: "${DATABASE_URL}"
+      - key: VALKEY_URL
+        scope: RUN_TIME
+        type: SECRET
+        value: "${VALKEY_URL}"
+      - key: REDIS_URL
+        scope: RUN_TIME
+        type: SECRET
+        value: "${REDIS_URL}"
+
+      # Auto-migration
+      - key: AUTO_MIGRATE
+        scope: RUN_TIME
+        type: GENERAL
+        value: "0"
+      - key: AUTO_SEED
+        scope: RUN_TIME
+        type: GENERAL
+        value: "0"
+
+      # Security
+      - key: SESSION_SECRET
+        scope: RUN_TIME
+        type: SECRET
+        value: "${SESSION_SECRET}"
+      - key: TRUST_PROXY
+        scope: RUN_TIME
+        type: GENERAL
+        value: "true"
+
+      # Rate limiting
+      - key: RATE_LIMIT_SHORT_WINDOW
+        scope: RUN_TIME
+        type: GENERAL
+        value: "1 min"
+      - key: RATE_LIMIT_SHORT_MAX
+        scope: RUN_TIME
+        type: GENERAL
+        value: "100"
+      - key: RATE_LIMIT_LONG_WINDOW
+        scope: RUN_TIME
+        type: GENERAL
+        value: "15 min"
+      - key: RATE_LIMIT_LONG_MAX
+        scope: RUN_TIME
+        type: GENERAL
+        value: "200"
+
+      # Link scraping
+      - key: LINK_TIMEOUT
+        scope: RUN_TIME
+        type: GENERAL
+        value: "15 seconds"
+      - key: CACHE_MAX_AGE
+        scope: RUN_TIME
+        type: GENERAL
+        value: "10 years"
+
+      # OIDC (Phase B will configure if needed)
+      - key: OIDC_CLIENT_ID
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: OIDC_ISSUER_BASE_URL
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: OIDC_CLIENT_SECRET
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: OIDC_TOKEN_ENDPOINT_AUTH_METHOD
+        scope: RUN_TIME
+        type: GENERAL
+        value: "none"
+      - key: OIDC_HTTP_TIMEOUT
+        scope: RUN_TIME
+        type: GENERAL
+        value: "15 seconds"
+
+      # OAuth2 API (Phase B will configure)
+      - key: OAUTH2_ENABLED
+        scope: RUN_TIME
+        type: GENERAL
+        value: "false"
+      - key: OAUTH2_JWT_ALGORITHMS
+        scope: RUN_TIME
+        type: GENERAL
+        value: "RS256"
+      - key: OAUTH2_JWT_AUDIENCE
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: OAUTH2_JWT_ISSUER
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: OAUTH2_JWT_SECRET
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: OAUTH2_JWKS_URI
+        scope: RUN_TIME
+        type: SECRET
+        value: ""
+      - key: OAUTH2_JWKS_HTTP_TIMEOUT
+        scope: RUN_TIME
+        type: GENERAL
+        value: "15 seconds"
+      - key: OAUTH2_JWKS_REQUESTS_PER_MINUTE
+        scope: RUN_TIME
+        type: GENERAL
+        value: "10"
+      - key: OAUTH2_DEFAULT_SCOPE
+        scope: RUN_TIME
+        type: GENERAL
+        value: "user:create user:read link:*"
+
+      # Frontend config
+      - key: REACT_APP_BASE_URL
+        scope: RUN_TIME
+        type: GENERAL
+        value: "${REACT_APP_BASE_URL}"

@@ -6,11 +6,14 @@ const merge = require('lodash/merge')
 const log = require('./lib/logger')
 
 let parsedConnection
-// heroku requires this
-if (process.env.HEROKU === 'true') {
+// Parse connection string and ensure SSL for production databases
+if (process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('postgres')) {
   const { parse } = require('pg-connection-string')
   parsedConnection = parse(process.env.DATABASE_URL)
-  merge(parsedConnection, { ssl: { rejectUnauthorized: false } })
+  // Enable SSL for production databases (most managed services require it)
+  if (process.env.NODE_ENV === 'production') {
+    merge(parsedConnection, { ssl: { rejectUnauthorized: false } })
+  }
 }
 
 module.exports = {
